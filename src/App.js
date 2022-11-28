@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./app.css";
 
-function App() {
+import Navbar from "./components/Navbar";
+import Form from "./components/Form";
+import Note from "./components/Note";
+
+export default function App() {
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    function callMe() {
+      let fetchedNotes = localStorage.getItem("notes");
+      if (fetchedNotes === null) {
+        localStorage.setItem("notes", JSON.stringify(notes));
+      } else {
+        setNotes(JSON.parse(fetchedNotes));
+      }
+    }
+    callMe();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <section className="app">
+      <Navbar />
+      <Form setNotes={setNotes} notes={notes} />
+      <div className="note-div">
+        {notes.map((note) => (
+          <Note
+            key={note.id}
+            id={note.id}
+            title={note.title}
+            content={note.content}
+            notes={notes}
+            setNotes={setNotes}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
-
-export default App;
